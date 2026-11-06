@@ -141,21 +141,16 @@ fun ColoringContent(
                 )
             }
 
-            AnimatedVisibility(
+            ToolDrawer(
                 visible = toolsOpen,
-                enter = slideInHorizontally { -it } + fadeIn(),
-                exit = slideOutHorizontally { -it } + fadeOut(),
+                selected = state.tool,
+                onSelect = {
+                    actions.onSelectTool(it)
+                    toolsOpen = false
+                },
+                onClose = { toolsOpen = false },
                 modifier = Modifier.align(Alignment.TopStart).padding(12.dp),
-            ) {
-                ToolPanel(
-                    selected = state.tool,
-                    onSelect = {
-                        actions.onSelectTool(it)
-                        toolsOpen = false
-                    },
-                    onClose = { toolsOpen = false },
-                )
-            }
+            )
         }
 
         if (art != null && progress != null) {
@@ -199,6 +194,25 @@ fun ColoringContent(
                 viewport.reset()
             },
         )
+    }
+}
+
+/** Slide-in wrapper for [ToolPanel]; kept outside any Row/Column scope on purpose. */
+@Composable
+private fun ToolDrawer(
+    visible: Boolean,
+    selected: Tool,
+    onSelect: (Tool) -> Unit,
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInHorizontally { -it } + fadeIn(),
+        exit = slideOutHorizontally { -it } + fadeOut(),
+        modifier = modifier,
+    ) {
+        ToolPanel(selected = selected, onSelect = onSelect, onClose = onClose)
     }
 }
 
