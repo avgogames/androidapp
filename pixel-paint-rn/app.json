@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "Pixel Paint",
+    "slug": "pixel-paint-rn",
+    "scheme": "pixelpaint",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F3F4F7",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.avgogames.pixelpaint.rn"
+    },
+    "android": {
+      "package": "com.avgogames.pixelpaint.rn",
+      "adaptiveIcon": {
+        "backgroundColor": "#2F9BF0",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Pixel Paint uses your photos to turn them into pixel art puzzles.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#2F9BF0"
+        }
+      ]
+    ]
+  }
+}

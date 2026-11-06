@@ -1,6 +1,7 @@
 # Pixel Paint
 
-A color-by-number pixel art game for Android, built with Kotlin and Jetpack Compose.
+A color-by-number pixel art game for Android, built with Kotlin and Jetpack Compose. A React Native
+(Expo) version of the same game lives in [`pixel-paint-rn/`](pixel-paint-rn/README.md).
 
 - **100 original artworks** in four categories: Anime, Cars, Animals and Scenes.
 - **Import any photo** and turn it into a numbered pixel art puzzle (16–64 cells wide, 4–32 colors).
@@ -33,3 +34,4 @@ Every pull request runs both in GitHub Actions and attaches the debug APK to the
 |---|---|
 | `:core` | Pure Kotlin: art model, the 100 procedural artworks, photo converter, tool rules, undo, storage |
 | `:app` | Android: Compose UI, ViewModels, navigation, photo decoding |
+| `pixel-paint-rn/` | React Native (Expo + Skia) app with the same artworks and rules |
