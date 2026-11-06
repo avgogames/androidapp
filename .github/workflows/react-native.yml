@@ -1,0 +1,88 @@
+name: React Native CI
+
+on:
+  push:
+    branches: [main]
+    paths: ['pixel-paint-rn/**', 'core/**', '.github/workflows/react-native.yml']
+  pull_request:
+    paths: ['pixel-paint-rn/**', 'core/**', '.github/workflows/react-native.yml']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: pixel-paint-rn
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: pixel-paint-rn/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests (rules, catalog, converter, storage)
+        run: npm test -- --ci
+
+      - name: Catalog matches the Kotlin artworks
+        working-directory: .
+        run: |
+          ./gradlew -p pixel-paint-rn/scripts/export-catalog :exporter:run -q
+          git diff --exit-code -- pixel-paint-rn/src/core/catalog/catalog.json
+
+      - name: Bundle JavaScript for Android
+        run: npx expo export --platform android --output-dir dist
+
+  apk:
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: pixel-paint-rn/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - run: npm ci
+
+      - name: Generate the native Android project
+        run: npx expo prebuild --platform android --no-install
+
+      - name: Build release APK (signed with the debug key, for sideloading)
+        working-directory: pixel-paint-rn/android
+        run: ./gradlew assembleRelease --stacktrace
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pixel-paint-rn-apk
+          path: pixel-paint-rn/android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
