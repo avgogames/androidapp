@@ -32,7 +32,7 @@ flowchart TB
         Repo1[repository singleton<br/>+ useLibrary hook]
         St[AsyncStorage store]
         IL[imageLoader<br/>picker → resize → Skia decode]
-        SR[skiaReady<br/>CanvasKit on web]
+        SR[confirm dialogs]
     end
 
     subgraph core ["src/core (pure TypeScript)"]
@@ -102,12 +102,13 @@ A 64×64 import or its progress is about 4 KB, the same as the Android app's bin
 ```
 pixel-paint-rn/
 ├── app.json, eas.json, package.json, tsconfig.json
+├── index.ts, index.web.ts      Entry points (web loads CanvasKit before the app)
 ├── assets/                      App icon, adaptive icon layers, splash (same pixel heart as Android)
 ├── docs/ARCHITECTURE.md         This document
 ├── scripts/export-catalog/      Standalone Gradle build: Kotlin catalog → catalog.json
 └── src/
     ├── app/                     expo-router routes (screens only)
-    │   ├── _layout.tsx          Stack navigator, waits for Skia on web
+    │   ├── _layout.tsx          Stack navigator
     │   ├── index.tsx            Gallery
     │   ├── color/[id].tsx       Coloring screen
     │   └── import.tsx           Photo import
@@ -119,7 +120,7 @@ pixel-paint-rn/
     │   ├── data/                ArtRepository, codec, KeyValueStore (+ MemoryStore for tests)
     │   ├── color.ts             RGB helpers (mix, luminance, hex)
     │   └── __tests__/           30 Jest tests
-    ├── platform/                AsyncStorage adapter, repository instance, image loader, Skia web loader
+    ├── platform/                AsyncStorage adapter, repository instance, image loader, confirm dialogs
     └── ui/
         ├── theme.ts             Colors, type scale, cell tones
         ├── components/          PixelArtImage, SquareIconButton, Stepper
